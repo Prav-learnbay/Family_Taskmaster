@@ -1,0 +1,151 @@
+# Family Task Management App - Comprehensive Development Prompt
+
+## Core Application Overview
+Create a comprehensive family task management application that enables seamless coordination between three family members (parent, spouse, and child) using the Eisenhower Matrix prioritization system. The app should serve as a central hub for managing daily tasks, appointments, and family coordination with intuitive user experience and robust functionality.
+
+## User Management & Profiles
+- **Multi-user system** supporting three distinct user profiles with customizable avatars and role-based permissions
+- **Parent/Admin role** with full access to create, assign, modify, and delete tasks for all family members
+- **Spouse role** with collaborative access to shared tasks and ability to manage personal tasks
+- **Child role** with age-appropriate interface, limited permissions, and gamification elements
+- **Profile customization** including preferences, notification settings, and personalized dashboard views
+
+## Eisenhower Matrix Integration
+Implement a sophisticated four-quadrant system for task prioritization:
+
+### Quadrant 1: Urgent & Important (Do First)
+- Medical appointments, school emergencies, work deadlines
+- Visual indicators: Red color coding, exclamation marks, priority badges
+- Automatic notifications and reminders
+
+### Quadrant 2: Important but Not Urgent (Schedule)
+- Family planning, exercise routines, skill development, preventive healthcare
+- Calendar integration for optimal scheduling
+- Weekly/monthly planning views
+
+### Quadrant 3: Urgent but Not Important (Delegate)
+- Household chores that can be shared, routine errands
+- Assignment features to distribute among family members
+- Clear delegation tracking and accountability
+
+### Quadrant 4: Neither Urgent nor Important (Eliminate)
+- Optional activities, entertainment, low-priority items
+- Smart suggestions for task elimination or postponement
+- Archive functionality for future reference
+
+## Advanced Calendar System
+Design a comprehensive scheduling solution supporting multiple event types:
+
+### Event Categories with Color Coding:
+- **Work appointments** (Blue) - Parent/spouse professional commitments
+- **School events** (Green) - Academic schedule, parent-teacher meetings, extracurriculars
+- **Social gatherings** (Purple) - Parties, family visits, community events
+- **Healthcare appointments** (Red) - Doctor visits, dental checkups, therapy sessions
+- **Travel plans** (Orange) - Vacations, business trips, weekend getaways
+- **Official meetings** (Gray) - Government appointments, legal consultations, financial meetings
+
+### Calendar Features:
+- **Multiple view modes**: Daily, weekly, monthly, and agenda views
+- **Shared family calendar** with individual member visibility controls
+- **Recurring event management** for regular appointments and activities
+- **Conflict detection** to prevent scheduling overlaps
+- **Weather integration** for outdoor activities and travel planning
+- **Location-based reminders** using GPS for appointment notifications
+
+## Task Management System
+Develop a robust task handling framework:
+
+### Task Creation & Assignment:
+- **Smart task templates** for common family activities
+- **Voice-to-text input** for quick task creation
+- **Photo attachments** for visual task instructions
+- **Deadline management** with flexible due date options
+- **Subtask breakdown** for complex multi-step activities
+
+### Progress Tracking:
+- **Visual progress indicators** (progress bars, completion percentages)
+- **Status updates**: Not Started, In Progress, Blocked, Completed
+- **Time tracking** for tasks requiring specific duration monitoring
+- **Milestone celebrations** for significant task completions
+- **Family collaboration tools** for shared task execution
+
+## Comprehensive Dashboard & Analytics
+Create an intelligent overview system displaying key family management metrics:
+
+### Key Performance Indicators:
+- **Task completion rates** per family member and overall
+- **Eisenhower quadrant distribution** showing family priority patterns
+- **Upcoming deadlines** with urgency-based sorting
+- **Calendar utilization** showing busy vs. available time slots
+- **Family coordination score** measuring collaborative task success
+
+### Visual Analytics:
+- **Interactive charts** showing weekly/monthly productivity trends
+- **Heat maps** displaying peak activity periods
+- **Goal achievement tracking** with visual progress representations
+- **Family contribution analysis** showing individual participation levels
+- **Habit formation tracking** for recurring positive behaviors
+
+## User Experience & Interface Design
+Design principles for optimal family usability:
+
+### Child-Friendly Features:
+- **Gamification elements**: Points, badges, achievement levels
+- **Visual task representations** using icons and illustrations
+- **Audio instructions** for pre-reading children
+- **Reward system integration** for completed tasks
+- **Simplified navigation** with large, colorful buttons
+
+### Adult Interface:
+- **Professional appearance** suitable for work-related tasks
+- **Quick-action shortcuts** for power users
+- **Detailed filtering options** for complex task management
+- **Integration capabilities** with existing productivity tools
+- **Customizable widgets** for personalized dashboard layouts
+
+## Smart Features & Automation
+Implement intelligent assistance capabilities:
+
+### AI-Powered Suggestions:
+- **Optimal scheduling recommendations** based on family patterns
+- **Task priority suggestions** using historical data and deadlines
+- **Conflict resolution proposals** for scheduling overlaps
+- **Efficiency improvement tips** based on completion patterns
+
+### Automation Features:
+- **Recurring task auto-creation** for routine activities
+- **Smart notification timing** based on user behavior patterns
+- **Weather-based task adjustments** for outdoor activities
+- **Travel time calculations** with real-time traffic integration
+
+## Technical Requirements
+Specify robust technical implementation:
+
+### Platform & Compatibility:
+- **Cross-platform availability**: Web, iOS, Android applications
+- **Real-time synchronization** across all devices
+- **Offline functionality** with data sync when reconnected
+- **Cloud backup system** ensuring data security and recovery
+
+### Integration Capabilities:
+- **Calendar app integration** (Google Calendar, Apple Calendar, Outlook)
+- **Email notification system** with customizable frequency
+- **School portal connections** for automatic assignment imports
+- **Healthcare provider integrations** for appointment management
+
+### Security & Privacy:
+- **Family data encryption** ensuring sensitive information protection
+- **User permission controls** preventing unauthorized access
+- **Parental oversight features** for child account monitoring
+- **COPPA compliance** for child user data protection
+
+## Success Metrics & Evaluation
+Define measurable outcomes for app effectiveness:
+
+- **Family task completion improvement** (target: 25% increase)
+- **Scheduling conflict reduction** (target: 80% fewer overlaps)
+- **User engagement consistency** across all family members
+- **Stress reduction indicators** through efficient family coordination
+- **Time savings measurement** in family planning and coordination
+
+This comprehensive prompt ensures the development of a sophisticated yet user-friendly family task management application that transforms household coordination from chaotic to streamlined, empowering families to achieve better work-life balance through intelligent task prioritization and collaborative planning.
