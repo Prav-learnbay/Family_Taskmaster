@@ -61,14 +61,24 @@ async function upsertUser(
   const existingUser = await storage.getUser(claims["sub"]);
   
   if (!existingUser) {
-    // Create a new family for the new user
+    // First create the user
+    const newUser = await storage.upsertUser({
+      id: claims["sub"],
+      email: claims["email"],
+      firstName: claims["first_name"],
+      lastName: claims["last_name"],
+      profileImageUrl: claims["profile_image_url"],
+      familyId: null, // Temporary null value
+    });
+    
+    // Then create a family for the new user
     const familyName = `${claims["first_name"] || claims["email"]}'s Family`;
     const family = await storage.createFamily({
       name: familyName,
       createdBy: claims["sub"],
     });
     
-    // Create user with the new family
+    // Update user with the family ID
     await storage.upsertUser({
       id: claims["sub"],
       email: claims["email"],
