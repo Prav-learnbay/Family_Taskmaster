@@ -93,9 +93,10 @@ export class DatabaseStorage implements IStorage {
 
   // Family operations
   async createFamily(familyData: InsertFamily): Promise<Family> {
+    const familyId = crypto.randomUUID();
     const [family] = await db
       .insert(families)
-      .values(familyData)
+      .values({ id: familyId, ...familyData })
       .returning();
     return family;
   }

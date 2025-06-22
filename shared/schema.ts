@@ -33,7 +33,7 @@ export const users = pgTable("users", {
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   role: varchar("role", { enum: ["parent", "spouse", "child"] }).notNull().default("parent"),
-  familyId: varchar("family_id").notNull(),
+  familyId: varchar("family_id"),
   dateOfBirth: date("date_of_birth"),
   preferences: jsonb("preferences"),
   gamificationLevel: integer("gamification_level").default(1),

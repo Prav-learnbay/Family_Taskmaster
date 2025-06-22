@@ -32,7 +32,6 @@ export default function FamilyMemberCard({ member }: FamilyMemberCardProps) {
   // Fetch member's tasks
   const { data: memberTasks } = useQuery<Task[]>({
     queryKey: ['/api/tasks', { assignee: member.id }],
-    queryKey: [`/api/tasks?assignee=${member.id}`],
     enabled: !!member.id,
   });
 

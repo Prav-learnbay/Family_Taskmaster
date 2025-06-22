@@ -18,7 +18,6 @@ export default function EisenhowerMatrix() {
   // Fetch tasks for each quadrant
   const { data: quadrant1Tasks = [] } = useQuery<Task[]>({
     queryKey: ['/api/tasks', { quadrant: 1 }],
-    queryKey: ['/api/tasks?quadrant=1'],
     enabled: !!user?.familyId,
   });
 

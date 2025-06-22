@@ -114,9 +114,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (assignee === 'me') {
         tasks = await storage.getUserTasks(userId);
       } else if (quadrant) {
-        tasks = await storage.getTasksByQuadrant(user.familyId, parseInt(quadrant as string));
+        tasks = await storage.getTasksByQuadrant(user.familyId!, parseInt(quadrant as string));
       } else {
-        tasks = await storage.getFamilyTasks(user.familyId);
+        tasks = await storage.getFamilyTasks(user.familyId!);
       }
       
       res.json(tasks);
@@ -199,12 +199,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         events = await storage.getUserEvents(userId);
       } else if (startDate && endDate) {
         events = await storage.getEventsForDateRange(
-          user.familyId,
+          user.familyId!,
           new Date(startDate as string),
           new Date(endDate as string)
         );
       } else {
-        events = await storage.getFamilyEvents(user.familyId);
+        events = await storage.getFamilyEvents(user.familyId!);
       }
       
       res.json(events);
