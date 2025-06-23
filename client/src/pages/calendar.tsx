@@ -45,13 +45,10 @@ export default function Calendar() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50">
-        <NavigationHeader />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-slate-200 rounded w-1/4 mb-4"></div>
-            <div className="h-96 bg-slate-200 rounded"></div>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-slate-200 rounded w-1/4 mb-4"></div>
+          <div className="h-96 bg-slate-200 rounded"></div>
         </div>
       </div>
     );
