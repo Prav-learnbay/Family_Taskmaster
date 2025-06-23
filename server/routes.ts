@@ -1,20 +1,51 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertTaskSchema, insertEventSchema, insertFamilySchema } from "@shared/schema";
 import { z } from "zod";
 import { nanoid } from "nanoid";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+  
+  // Mock user data for the demo - in a real app this would come from authentication
+  const DEMO_USER = {
+    id: "demo-user-1",
+    email: "demo@example.com",
+    firstName: "Demo",
+    lastName: "User",
+    profileImageUrl: null,
+    role: "parent" as const,
+    familyId: "demo-family-1"
+  };
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  const DEMO_FAMILY = {
+    id: "demo-family-1",
+    name: "Demo Family",
+    createdBy: "demo-user-1"
+  };
+
+  // Initialize demo data if not exists
+  app.use(async (req, res, next) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
+      const existingUser = await storage.getUser(DEMO_USER.id);
+      if (!existingUser) {
+        // Create demo user first
+        await storage.upsertUser(DEMO_USER);
+        // Then create demo family
+        await storage.createFamily(DEMO_FAMILY);
+        // Update user with family ID
+        await storage.upsertUser({ ...DEMO_USER, familyId: DEMO_FAMILY.id });
+      }
+    } catch (error) {
+      console.log("Demo data already exists or error:", error);
+    }
+    next();
+  });
+
+  // Auth routes (simplified for demo)
+  app.get('/api/auth/user', async (req, res) => {
+    try {
+      const user = await storage.getUser(DEMO_USER.id);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -26,36 +57,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Family routes
-  app.post('/api/families', isAuthenticated, async (req: any, res) => {
+  app.post('/api/families', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
       const familyData = insertFamilySchema.parse({
         ...req.body,
         id: nanoid(),
-        createdBy: userId,
+        createdBy: DEMO_USER.id,
       });
       
       const family = await storage.createFamily(familyData);
-      
-      // Update user's familyId
-      await storage.upsertUser({
-        id: userId,
-        familyId: family.id,
-        email: req.user.claims.email,
-        firstName: req.user.claims.first_name,
-        lastName: req.user.claims.last_name,
-        profileImageUrl: req.user.claims.profile_image_url,
-        role: "parent",
-      });
-      
-      res.json(family);
+      res.status(201).json(family);
     } catch (error) {
       console.error("Error creating family:", error);
       res.status(500).json({ message: "Failed to create family" });
     }
   });
 
-  app.get('/api/families/:id/members', isAuthenticated, async (req: any, res) => {
+  app.get('/api/families/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const family = await storage.getFamily(id);
+      if (!family) {
+        return res.status(404).json({ message: "Family not found" });
+      }
+      res.json(family);
+    } catch (error) {
+      console.error("Error fetching family:", error);
+      res.status(500).json({ message: "Failed to fetch family" });
+    }
+  });
+
+  app.get('/api/families/:id/members', async (req, res) => {
     try {
       const { id } = req.params;
       const members = await storage.getFamilyMembers(id);
@@ -66,7 +98,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/families/:id/stats', isAuthenticated, async (req: any, res) => {
+  app.get('/api/families/:id/stats', async (req, res) => {
     try {
       const { id } = req.params;
       const stats = await storage.getFamilyStats(id);
@@ -78,45 +110,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Task routes
-  app.post('/api/tasks', isAuthenticated, async (req: any, res) => {
+  app.post('/api/tasks', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
       const taskData = insertTaskSchema.parse({
         ...req.body,
-        createdBy: userId,
-        familyId: user.familyId,
+        createdBy: DEMO_USER.id,
+        familyId: DEMO_USER.familyId,
+        assigneeId: req.body.assigneeId || DEMO_USER.id,
       });
       
       const task = await storage.createTask(taskData);
-      res.json(task);
+      res.status(201).json(task);
     } catch (error) {
       console.error("Error creating task:", error);
       res.status(500).json({ message: "Failed to create task" });
     }
   });
 
-  app.get('/api/tasks', isAuthenticated, async (req: any, res) => {
+  app.get('/api/tasks', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      const { assignee, quadrant } = req.query;
+      const { quadrant, status } = req.query;
       
-      let tasks;
-      if (assignee === 'me') {
-        tasks = await storage.getUserTasks(userId);
-      } else if (quadrant) {
-        tasks = await storage.getTasksByQuadrant(user.familyId!, parseInt(quadrant as string));
-      } else {
-        tasks = await storage.getFamilyTasks(user.familyId!);
+      if (quadrant) {
+        const tasks = await storage.getTasksByQuadrant(DEMO_USER.familyId, parseInt(quadrant as string));
+        return res.json(tasks);
+      }
+      
+      let tasks = await storage.getFamilyTasks(DEMO_USER.familyId);
+      
+      if (status) {
+        tasks = tasks.filter(task => task.status === status);
       }
       
       res.json(tasks);
@@ -126,7 +149,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/tasks/:id', isAuthenticated, async (req: any, res) => {
+  app.get('/api/tasks/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const task = await storage.getTask(parseInt(id));
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      res.json(task);
+    } catch (error) {
+      console.error("Error fetching task:", error);
+      res.status(500).json({ message: "Failed to fetch task" });
+    }
+  });
+
+  app.put('/api/tasks/:id', async (req, res) => {
     try {
       const { id } = req.params;
       const updates = req.body;
@@ -138,11 +175,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/tasks/:id/complete', isAuthenticated, async (req: any, res) => {
+  app.put('/api/tasks/:id/complete', async (req, res) => {
     try {
       const { id } = req.params;
-      const userId = req.user.claims.sub;
-      const task = await storage.completeTask(parseInt(id), userId);
+      const task = await storage.completeTask(parseInt(id), DEMO_USER.id);
       res.json(task);
     } catch (error) {
       console.error("Error completing task:", error);
@@ -150,7 +186,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/tasks/:id', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/tasks/:id', async (req, res) => {
     try {
       const { id } = req.params;
       await storage.deleteTask(parseInt(id));
@@ -162,51 +198,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Event routes
-  app.post('/api/events', isAuthenticated, async (req: any, res) => {
+  app.post('/api/events', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
       const eventData = insertEventSchema.parse({
         ...req.body,
-        createdBy: userId,
-        familyId: user.familyId,
+        createdBy: DEMO_USER.id,
+        familyId: DEMO_USER.familyId,
       });
       
       const event = await storage.createEvent(eventData);
-      res.json(event);
+      res.status(201).json(event);
     } catch (error) {
       console.error("Error creating event:", error);
       res.status(500).json({ message: "Failed to create event" });
     }
   });
 
-  app.get('/api/events', isAuthenticated, async (req: any, res) => {
+  app.get('/api/events', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      const { startDate, endDate, user: userFilter } = req.query;
+      const { startDate, endDate } = req.query;
       
-      let events;
-      if (userFilter === 'me') {
-        events = await storage.getUserEvents(userId);
-      } else if (startDate && endDate) {
-        events = await storage.getEventsForDateRange(
-          user.familyId!,
+      if (startDate && endDate) {
+        const events = await storage.getEventsForDateRange(
+          DEMO_USER.familyId,
           new Date(startDate as string),
           new Date(endDate as string)
         );
-      } else {
-        events = await storage.getFamilyEvents(user.familyId!);
+        return res.json(events);
       }
       
+      const events = await storage.getFamilyEvents(DEMO_USER.familyId);
       res.json(events);
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -214,7 +235,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/events/:id', isAuthenticated, async (req: any, res) => {
+  app.get('/api/events/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const event = await storage.getEvent(parseInt(id));
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      res.json(event);
+    } catch (error) {
+      console.error("Error fetching event:", error);
+      res.status(500).json({ message: "Failed to fetch event" });
+    }
+  });
+
+  app.put('/api/events/:id', async (req, res) => {
     try {
       const { id } = req.params;
       const updates = req.body;
@@ -226,7 +261,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/events/:id', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/events/:id', async (req, res) => {
     try {
       const { id } = req.params;
       await storage.deleteEvent(parseInt(id));
@@ -238,10 +273,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Achievement routes
-  app.get('/api/achievements', isAuthenticated, async (req: any, res) => {
+  app.get('/api/achievements', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const achievements = await storage.getUserAchievements(userId);
+      const achievements = await storage.getUserAchievements(DEMO_USER.id);
       res.json(achievements);
     } catch (error) {
       console.error("Error fetching achievements:", error);
@@ -250,10 +284,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Notification routes
-  app.get('/api/notifications', isAuthenticated, async (req: any, res) => {
+  app.get('/api/notifications', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const notifications = await storage.getUserNotifications(userId);
+      const notifications = await storage.getUserNotifications(DEMO_USER.id);
       res.json(notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
@@ -261,7 +294,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/notifications/:id/read', isAuthenticated, async (req: any, res) => {
+  app.put('/api/notifications/:id/read', async (req, res) => {
     try {
       const { id } = req.params;
       await storage.markNotificationAsRead(parseInt(id));

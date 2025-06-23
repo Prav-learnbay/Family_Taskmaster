@@ -23,34 +23,17 @@ import {
 import type { User, Task, Event } from "@shared/schema";
 
 export default function Dashboard() {
-  const { user, isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
+  const DEMO_FAMILY_ID = "demo-family-1";
 
   // Fetch family stats
   const { data: familyStats, isLoading: statsLoading } = useQuery({
-    queryKey: [`/api/families/${user?.familyId}/stats`],
-    enabled: !!user?.familyId,
+    queryKey: [`/api/families/${DEMO_FAMILY_ID}/stats`],
   });
 
   // Fetch family members
   const { data: familyMembers, isLoading: membersLoading } = useQuery<User[]>({
-    queryKey: [`/api/families/${user?.familyId}/members`],
-    enabled: !!user?.familyId,
+    queryKey: [`/api/families/${DEMO_FAMILY_ID}/members`],
   });
 
   // Fetch today's events
@@ -79,25 +62,17 @@ export default function Dashboard() {
     return "Good evening";
   };
 
-  const getUserDisplayName = () => {
-    const name = user.firstName || "User";
-    return `${name}${user.role === "parent" ? " (Parent)" : user.role === "spouse" ? " (Spouse)" : ""}`;
-  };
-
   return (
-    <div className="min-h-screen bg-slate-50">
-      <NavigationHeader />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Dashboard Header */}
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-900 flex items-center">
-                {getGreeting()}, {getUserDisplayName()}! 👋
-              </h2>
-              <p className="text-slate-600 mt-1">Here's what's happening with your family today</p>
-            </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Dashboard Header */}
+      <div className="mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900 flex items-center">
+              {getGreeting()}, Demo User! 👋
+            </h2>
+            <p className="text-slate-600 mt-1">Here's what's happening with your family today</p>
+          </div>
             <Button className="mt-4 sm:mt-0 bg-primary text-white hover:bg-primary/90">
               <Plus className="w-4 h-4 mr-2" />
               Add Task
@@ -326,6 +301,5 @@ export default function Dashboard() {
           </Card>
         </div>
       </div>
-    </div>
   );
 }

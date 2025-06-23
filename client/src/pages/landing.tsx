@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { HomeIcon, Users, Calendar, Target, Star, Shield } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Landing() {
   return (
@@ -15,12 +16,11 @@ export default function Landing() {
               </div>
               <h1 className="text-xl font-bold text-slate-900">FamilySync</h1>
             </div>
-            <Button 
-              onClick={() => window.location.href = '/api/login'}
-              className="bg-primary hover:bg-primary/90 text-white"
-            >
-              Sign In
-            </Button>
+            <Link href="/">
+              <Button className="bg-primary hover:bg-primary/90 text-white">
+                Enter App
+              </Button>
+            </Link>
           </div>
         </div>
       </header>
@@ -132,13 +132,14 @@ export default function Landing() {
           <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
             Join thousands of families who have reduced scheduling conflicts by 80% and increased task completion by 25% with FamilySync.
           </p>
-          <Button 
-            size="lg"
-            onClick={() => window.location.href = '/api/login'}
-            className="bg-primary hover:bg-primary/90 text-white px-8 py-3"
-          >
-            Get Started - It's Free
-          </Button>
+          <Link href="/">
+            <Button 
+              size="lg"
+              className="bg-primary hover:bg-primary/90 text-white px-8 py-3"
+            >
+              Get Started - It's Free
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

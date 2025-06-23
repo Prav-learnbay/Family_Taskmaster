@@ -1,6 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import NavigationHeader from "@/components/NavigationHeader";
 import FamilyMemberCard from "@/components/FamilyMemberCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,32 +7,27 @@ import { Users, UserPlus, Trophy, Target, TrendingUp, Calendar } from "lucide-re
 import type { User } from "@shared/schema";
 
 export default function Family() {
-  const { user } = useAuth();
+  const DEMO_FAMILY_ID = "demo-family-1";
 
   // Fetch family members
   const { data: familyMembers, isLoading: membersLoading } = useQuery<User[]>({
-    queryKey: [`/api/families/${user?.familyId}/members`],
-    enabled: !!user?.familyId,
+    queryKey: [`/api/families/${DEMO_FAMILY_ID}/members`],
   });
 
   // Fetch family stats
   const { data: familyStats, isLoading: statsLoading } = useQuery({
-    queryKey: [`/api/families/${user?.familyId}/stats`],
-    enabled: !!user?.familyId,
+    queryKey: [`/api/families/${DEMO_FAMILY_ID}/stats`],
   });
 
   if (membersLoading || statsLoading) {
     return (
-      <div className="min-h-screen bg-slate-50">
-        <NavigationHeader />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-slate-200 rounded w-1/4 mb-4"></div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="h-64 bg-slate-200 rounded"></div>
-              <div className="h-64 bg-slate-200 rounded"></div>
-              <div className="h-64 bg-slate-200 rounded"></div>
-            </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-slate-200 rounded w-1/4 mb-4"></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="h-64 bg-slate-200 rounded"></div>
+            <div className="h-64 bg-slate-200 rounded"></div>
+            <div className="h-64 bg-slate-200 rounded"></div>
           </div>
         </div>
       </div>
@@ -46,10 +39,7 @@ export default function Family() {
   const childMembers = familyMembers?.filter(member => member.role === "child") || [];
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <NavigationHeader />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Family Header */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
@@ -271,6 +261,5 @@ export default function Family() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

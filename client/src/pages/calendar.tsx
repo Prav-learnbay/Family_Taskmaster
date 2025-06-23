@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import NavigationHeader from "@/components/NavigationHeader";
 import CalendarView from "@/components/CalendarView";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,14 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { Event } from "@shared/schema";
 
 export default function Calendar() {
-  const { user } = useAuth();
   const [selectedView, setSelectedView] = useState("month");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   // Fetch all family events
   const { data: events, isLoading } = useQuery<Event[]>({
     queryKey: ['/api/events'],
-    enabled: !!user?.familyId,
   });
 
   // Filter events by category
@@ -62,8 +58,6 @@ export default function Calendar() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <NavigationHeader />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Calendar Header */}
@@ -217,6 +211,5 @@ export default function Calendar() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

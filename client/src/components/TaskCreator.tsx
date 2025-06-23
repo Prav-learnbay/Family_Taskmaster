@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
@@ -52,15 +51,14 @@ const taskFormSchema = insertTaskSchema.extend({
 type TaskFormData = z.infer<typeof taskFormSchema>;
 
 export default function TaskCreator({ onClose }: TaskCreatorProps) {
-  const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [dueDateOpen, setDueDateOpen] = useState(false);
+  const DEMO_FAMILY_ID = "demo-family-1";
 
   // Fetch family members for assignment
   const { data: familyMembers } = useQuery<User[]>({
-    queryKey: [`/api/families/${user?.familyId}/members`],
-    enabled: !!user?.familyId,
+    queryKey: [`/api/families/${DEMO_FAMILY_ID}/members`],
   });
 
   const form = useForm<TaskFormData>({
