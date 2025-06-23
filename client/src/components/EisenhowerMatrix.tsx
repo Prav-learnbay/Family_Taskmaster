@@ -15,23 +15,19 @@ export default function EisenhowerMatrix() {
 
   // Fetch tasks for each quadrant
   const { data: quadrant1Tasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/tasks', { quadrant: 1 }],
-    enabled: !!user?.familyId,
+    queryKey: ['/api/tasks?quadrant=1'],
   });
 
   const { data: quadrant2Tasks = [] } = useQuery<Task[]>({
     queryKey: ['/api/tasks?quadrant=2'],
-    enabled: !!user?.familyId,
   });
 
   const { data: quadrant3Tasks = [] } = useQuery<Task[]>({
     queryKey: ['/api/tasks?quadrant=3'],
-    enabled: !!user?.familyId,
   });
 
   const { data: quadrant4Tasks = [] } = useQuery<Task[]>({
     queryKey: ['/api/tasks?quadrant=4'],
-    enabled: !!user?.familyId,
   });
 
   // Complete task mutation
@@ -105,7 +101,7 @@ export default function EisenhowerMatrix() {
           )}
           {task.assigneeId && (
             <p className="text-xs text-slate-600">
-              Assigned to: {task.assigneeId === user?.id ? 'Me' : 'Family Member'}
+              Assigned to: {task.assigneeId === 'demo-user-1' ? 'Me' : 'Family Member'}
             </p>
           )}
         </div>

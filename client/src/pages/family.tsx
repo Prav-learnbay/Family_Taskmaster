@@ -50,7 +50,7 @@ export default function Family() {
               </h2>
               <p className="text-slate-600 mt-1">Monitor and manage your family's progress</p>
             </div>
-            {user?.role === "parent" && (
+            {true && (
               <Button className="mt-4 sm:mt-0 bg-primary text-white hover:bg-primary/90">
                 <UserPlus className="w-4 h-4 mr-2" />
                 Add Family Member
